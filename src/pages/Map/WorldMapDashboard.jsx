@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   ComposableMap,
   Geographies,
@@ -75,6 +76,7 @@ export default function WorldMapDashboard() {
   const [tooltip, setTooltip] = useState(null)
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
   const [selectedCountry, setSelectedCountry] = useState(null)
+  const navigate = useNavigate()
 
   const filtered = useMemo(() => {
     let list = trademarks
@@ -221,7 +223,12 @@ export default function WorldMapDashboard() {
               {selectedMarks.map(tm => (
                 <div key={tm.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-[#ffa600]/30 transition-colors">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-semibold text-gray-900">{tm.markName}</p>
+                    <button
+                      onClick={() => navigate(`/trademarks/${tm.id}`)}
+                      className="text-sm font-semibold text-gray-900 hover:text-[#ffa600] transition-colors text-left"
+                    >
+                      {tm.markName}
+                    </button>
                     <Badge status={tm.status} />
                   </div>
                   <p className="text-xs text-gray-400 mt-0.5">{tm.markType} · Classes: {tm.niceClasses?.join(', ')}</p>
