@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+
+@theme {
+  --color-brand-primary: #F97316;
+  --color-brand-primary-light: #FED7AA;
+  --color-brand-primary-dark: #C2410C;
+  --color-brand-success: #10B981;
+  --color-brand-info: #0EA5E9;
+  --color-brand-warning: #F59E0B;
+  --color-brand-error: #EF4444;
+  --font-sans: "Inter", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.rsm-geography:focus {
+  outline: none;
+}

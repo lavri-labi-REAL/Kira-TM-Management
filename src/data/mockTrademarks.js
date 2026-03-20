@@ -1,0 +1,411 @@
+export const NICE_CLASSES = [
+  { value: 1, label: 'Class 1 – Chemicals' },
+  { value: 2, label: 'Class 2 – Paints' },
+  { value: 3, label: 'Class 3 – Cosmetics & Cleaning' },
+  { value: 4, label: 'Class 4 – Lubricants & Fuels' },
+  { value: 5, label: 'Class 5 – Pharmaceuticals' },
+  { value: 6, label: 'Class 6 – Metal Goods' },
+  { value: 7, label: 'Class 7 – Machinery' },
+  { value: 8, label: 'Class 8 – Hand Tools' },
+  { value: 9, label: 'Class 9 – Electrical & Scientific' },
+  { value: 10, label: 'Class 10 – Medical Devices' },
+  { value: 11, label: 'Class 11 – Environmental Control' },
+  { value: 12, label: 'Class 12 – Vehicles' },
+  { value: 13, label: 'Class 13 – Firearms' },
+  { value: 14, label: 'Class 14 – Jewelry' },
+  { value: 15, label: 'Class 15 – Musical Instruments' },
+  { value: 16, label: 'Class 16 – Paper & Printed Matter' },
+  { value: 17, label: 'Class 17 – Rubber Products' },
+  { value: 18, label: 'Class 18 – Leather Goods' },
+  { value: 19, label: 'Class 19 – Non-metallic Building Materials' },
+  { value: 20, label: 'Class 20 – Furniture' },
+  { value: 21, label: 'Class 21 – Household Utensils' },
+  { value: 22, label: 'Class 22 – Cordage & Fibers' },
+  { value: 23, label: 'Class 23 – Yarns & Threads' },
+  { value: 24, label: 'Class 24 – Textiles' },
+  { value: 25, label: 'Class 25 – Clothing' },
+  { value: 26, label: 'Class 26 – Lace & Embroidery' },
+  { value: 27, label: 'Class 27 – Floor Coverings' },
+  { value: 28, label: 'Class 28 – Games & Toys' },
+  { value: 29, label: 'Class 29 – Meats & Processed Foods' },
+  { value: 30, label: 'Class 30 – Staple Foods' },
+  { value: 31, label: 'Class 31 – Natural Agricultural Products' },
+  { value: 32, label: 'Class 32 – Light Beverages' },
+  { value: 33, label: 'Class 33 – Wine & Spirits' },
+  { value: 34, label: 'Class 34 – Tobacco Products' },
+  { value: 35, label: 'Class 35 – Advertising & Business' },
+  { value: 36, label: 'Class 36 – Insurance & Finance' },
+  { value: 37, label: 'Class 37 – Construction & Repair' },
+  { value: 38, label: 'Class 38 – Telecommunications' },
+  { value: 39, label: 'Class 39 – Transportation & Storage' },
+  { value: 40, label: 'Class 40 – Treatment of Materials' },
+  { value: 41, label: 'Class 41 – Education & Entertainment' },
+  { value: 42, label: 'Class 42 – Scientific & Technological Services' },
+  { value: 43, label: 'Class 43 – Food & Drink Services' },
+  { value: 44, label: 'Class 44 – Medical & Veterinary Services' },
+  { value: 45, label: 'Class 45 – Legal & Security Services' },
+]
+
+export const JURISDICTIONS = [
+  'United States', 'European Union', 'United Kingdom', 'Germany', 'France',
+  'Japan', 'China', 'Australia', 'Canada', 'Brazil', 'India', 'Mexico',
+  'South Korea', 'Switzerland', 'Netherlands', 'Spain', 'Italy', 'Sweden',
+  'Norway', 'Denmark', 'Singapore', 'South Africa', 'UAE', 'Russia',
+  'Argentina', 'Chile', 'Colombia', 'Turkey', 'Poland', 'Czech Republic',
+]
+
+export const MARK_TYPES = ['Word', 'Figurative', 'Combined', 'Sound', '3D']
+export const STATUSES = ['Filed', 'Published', 'Registered', 'Opposed', 'Expired']
+
+let trademarkStore = null
+
+function loadFromStorage() {
+  try {
+    const stored = localStorage.getItem('kira_trademarks')
+    if (stored) return JSON.parse(stored)
+  } catch {}
+  return null
+}
+
+function saveToStorage(data) {
+  try {
+    localStorage.setItem('kira_trademarks', JSON.stringify(data))
+  } catch {}
+}
+
+const defaultTrademarks = [
+  {
+    id: 'tm-001',
+    markName: 'Kirkira',
+    markType: 'Word',
+    niceClasses: [35, 42, 45],
+    jurisdiction: 'United States',
+    filingDate: '2019-03-15',
+    publicationDate: '2019-08-20',
+    registrationDate: '2020-01-10',
+    renewalDate: '2030-01-10',
+    status: 'Registered',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: 'Core brand trademark for legal-tech platform.',
+    applicationNumber: 'US-2019-0315-KIR',
+  },
+  {
+    id: 'tm-002',
+    markName: 'Kirkira',
+    markType: 'Figurative',
+    niceClasses: [35, 42],
+    jurisdiction: 'European Union',
+    filingDate: '2019-04-01',
+    publicationDate: '2019-09-15',
+    registrationDate: '2020-02-28',
+    renewalDate: '2030-02-28',
+    status: 'Registered',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: 'EU registration covering logo mark.',
+    applicationNumber: 'EU-2019-0401-KIR',
+  },
+  {
+    id: 'tm-003',
+    markName: 'LexiCore',
+    markType: 'Word',
+    niceClasses: [9, 42],
+    jurisdiction: 'United Kingdom',
+    filingDate: '2021-06-10',
+    publicationDate: '2021-11-05',
+    registrationDate: '2022-03-20',
+    renewalDate: '2032-03-20',
+    status: 'Registered',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: 'Legal AI product brand.',
+    applicationNumber: 'UK-2021-0610-LEX',
+  },
+  {
+    id: 'tm-004',
+    markName: 'TrustMark Pro',
+    markType: 'Combined',
+    niceClasses: [36, 45],
+    jurisdiction: 'Germany',
+    filingDate: '2022-01-20',
+    publicationDate: '2022-06-15',
+    registrationDate: null,
+    renewalDate: null,
+    status: 'Opposed',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: 'Opposition filed by competitor on June 30, 2022.',
+    applicationNumber: 'DE-2022-0120-TMP',
+  },
+  {
+    id: 'tm-005',
+    markName: 'DocuVault',
+    markType: 'Word',
+    niceClasses: [9, 35, 38],
+    jurisdiction: 'Japan',
+    filingDate: '2020-09-01',
+    publicationDate: '2021-02-10',
+    registrationDate: '2021-08-25',
+    renewalDate: '2031-08-25',
+    status: 'Registered',
+    owner: 'Kirkira Asia Pacific Ltd.',
+    notes: 'Document management product for Asian market.',
+    applicationNumber: 'JP-2020-0901-DOC',
+  },
+  {
+    id: 'tm-006',
+    markName: 'DocuVault',
+    markType: 'Word',
+    niceClasses: [9, 35, 38],
+    jurisdiction: 'China',
+    filingDate: '2020-10-15',
+    publicationDate: '2021-04-20',
+    registrationDate: null,
+    renewalDate: null,
+    status: 'Filed',
+    owner: 'Kirkira Asia Pacific Ltd.',
+    notes: 'Awaiting examination in China.',
+    applicationNumber: 'CN-2020-1015-DOC',
+  },
+  {
+    id: 'tm-007',
+    markName: 'NexaSign',
+    markType: 'Combined',
+    niceClasses: [9, 36, 42],
+    jurisdiction: 'Australia',
+    filingDate: '2021-03-05',
+    publicationDate: '2021-07-30',
+    registrationDate: '2022-01-15',
+    renewalDate: '2032-01-15',
+    status: 'Registered',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: 'E-signature product trademark.',
+    applicationNumber: 'AU-2021-0305-NEX',
+  },
+  {
+    id: 'tm-008',
+    markName: 'NexaSign',
+    markType: 'Combined',
+    niceClasses: [9, 36, 42],
+    jurisdiction: 'Canada',
+    filingDate: '2021-04-10',
+    publicationDate: '2021-09-05',
+    registrationDate: '2022-04-01',
+    renewalDate: '2032-04-01',
+    status: 'Registered',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: '',
+    applicationNumber: 'CA-2021-0410-NEX',
+  },
+  {
+    id: 'tm-009',
+    markName: 'PolicyAI',
+    markType: 'Word',
+    niceClasses: [36, 42, 45],
+    jurisdiction: 'Brazil',
+    filingDate: '2022-07-18',
+    publicationDate: null,
+    registrationDate: null,
+    renewalDate: null,
+    status: 'Filed',
+    owner: 'Kirkira LATAM S.A.',
+    notes: 'Insurance tech AI tool.',
+    applicationNumber: 'BR-2022-0718-POL',
+  },
+  {
+    id: 'tm-010',
+    markName: 'PolicyAI',
+    markType: 'Word',
+    niceClasses: [36, 42, 45],
+    jurisdiction: 'Mexico',
+    filingDate: '2022-07-20',
+    publicationDate: '2023-01-10',
+    registrationDate: null,
+    renewalDate: null,
+    status: 'Published',
+    owner: 'Kirkira LATAM S.A.',
+    notes: 'Under examination.',
+    applicationNumber: 'MX-2022-0720-POL',
+  },
+  {
+    id: 'tm-011',
+    markName: 'ComplianceHub',
+    markType: 'Word',
+    niceClasses: [35, 42, 45],
+    jurisdiction: 'India',
+    filingDate: '2021-11-30',
+    publicationDate: '2022-05-20',
+    registrationDate: '2023-01-08',
+    renewalDate: '2033-01-08',
+    status: 'Registered',
+    owner: 'Kirkira India Pvt. Ltd.',
+    notes: 'Compliance management platform.',
+    applicationNumber: 'IN-2021-1130-COM',
+  },
+  {
+    id: 'tm-012',
+    markName: 'AuditTrail',
+    markType: 'Word',
+    niceClasses: [9, 35, 42],
+    jurisdiction: 'Switzerland',
+    filingDate: '2018-05-14',
+    publicationDate: '2018-10-01',
+    registrationDate: '2019-03-20',
+    renewalDate: '2024-03-20',
+    status: 'Expired',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: 'Renewal missed — mark expired.',
+    applicationNumber: 'CH-2018-0514-AUD',
+  },
+  {
+    id: 'tm-013',
+    markName: 'SmartClause',
+    markType: '3D',
+    niceClasses: [9, 42],
+    jurisdiction: 'South Korea',
+    filingDate: '2023-01-25',
+    publicationDate: '2023-06-10',
+    registrationDate: null,
+    renewalDate: null,
+    status: 'Published',
+    owner: 'Kirkira Asia Pacific Ltd.',
+    notes: 'Contract automation platform product.',
+    applicationNumber: 'KR-2023-0125-SMC',
+  },
+  {
+    id: 'tm-014',
+    markName: 'Kirkira Pro',
+    markType: 'Word',
+    niceClasses: [35, 42, 45],
+    jurisdiction: 'France',
+    filingDate: '2020-06-01',
+    publicationDate: '2020-11-15',
+    registrationDate: '2021-05-10',
+    renewalDate: '2031-05-10',
+    status: 'Registered',
+    owner: 'Kirkira Europe SARL',
+    notes: 'Premium tier branding for European market.',
+    applicationNumber: 'FR-2020-0601-KPR',
+  },
+  {
+    id: 'tm-015',
+    markName: 'DataLedger',
+    markType: 'Combined',
+    niceClasses: [9, 36, 42],
+    jurisdiction: 'Netherlands',
+    filingDate: '2022-03-10',
+    publicationDate: '2022-08-05',
+    registrationDate: '2023-02-20',
+    renewalDate: '2033-02-20',
+    status: 'Registered',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: 'Blockchain ledger product.',
+    applicationNumber: 'NL-2022-0310-DAL',
+  },
+  {
+    id: 'tm-016',
+    markName: 'LegalFlow',
+    markType: 'Word',
+    niceClasses: [42, 45],
+    jurisdiction: 'Spain',
+    filingDate: '2023-05-15',
+    publicationDate: null,
+    registrationDate: null,
+    renewalDate: null,
+    status: 'Filed',
+    owner: 'Kirkira Europe SARL',
+    notes: 'New workflow automation tool.',
+    applicationNumber: 'ES-2023-0515-LFL',
+  },
+  {
+    id: 'tm-017',
+    markName: 'RiskRadar',
+    markType: 'Sound',
+    niceClasses: [36, 42],
+    jurisdiction: 'Singapore',
+    filingDate: '2022-09-20',
+    publicationDate: '2023-02-14',
+    registrationDate: '2023-09-01',
+    renewalDate: '2033-09-01',
+    status: 'Registered',
+    owner: 'Kirkira Asia Pacific Ltd.',
+    notes: 'Risk analytics product — sound mark of radar ping.',
+    applicationNumber: 'SG-2022-0920-RRD',
+  },
+  {
+    id: 'tm-018',
+    markName: 'ContractBot',
+    markType: 'Word',
+    niceClasses: [9, 42, 45],
+    jurisdiction: 'UAE',
+    filingDate: '2023-07-01',
+    publicationDate: null,
+    registrationDate: null,
+    renewalDate: null,
+    status: 'Filed',
+    owner: 'Kirkira MENA FZE',
+    notes: 'Middle East expansion — contract automation.',
+    applicationNumber: 'AE-2023-0701-COB',
+  },
+  {
+    id: 'tm-019',
+    markName: 'TrustMark Pro',
+    markType: 'Combined',
+    niceClasses: [36, 45],
+    jurisdiction: 'Italy',
+    filingDate: '2022-02-14',
+    publicationDate: '2022-07-30',
+    registrationDate: '2023-03-15',
+    renewalDate: '2033-03-15',
+    status: 'Registered',
+    owner: 'Kirkira Europe SARL',
+    notes: 'Successfully registered in Italy without opposition.',
+    applicationNumber: 'IT-2022-0214-TMP',
+  },
+  {
+    id: 'tm-020',
+    markName: 'Kirkira',
+    markType: 'Word',
+    niceClasses: [35, 42, 45],
+    jurisdiction: 'South Africa',
+    filingDate: '2021-08-10',
+    publicationDate: '2022-02-05',
+    registrationDate: '2022-09-20',
+    renewalDate: '2032-09-20',
+    status: 'Registered',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: 'Core brand registered in South Africa.',
+    applicationNumber: 'ZA-2021-0810-KIR',
+  },
+]
+
+export function getTrademarks() {
+  if (!trademarkStore) {
+    trademarkStore = loadFromStorage() || [...defaultTrademarks]
+  }
+  return trademarkStore
+}
+
+export function saveTrademarks(data) {
+  trademarkStore = data
+  saveToStorage(data)
+}
+
+export function getTrademark(id) {
+  return getTrademarks().find(t => t.id === id)
+}
+
+export function addTrademark(trademark) {
+  const newTm = { ...trademark, id: `tm-${Date.now()}` }
+  const updated = [...getTrademarks(), newTm]
+  saveTrademarks(updated)
+  return newTm
+}
+
+export function updateTrademark(id, updates) {
+  const updated = getTrademarks().map(t => t.id === id ? { ...t, ...updates } : t)
+  saveTrademarks(updated)
+  return updated.find(t => t.id === id)
+}
+
+export function deleteTrademark(id) {
+  const updated = getTrademarks().filter(t => t.id !== id)
+  saveTrademarks(updated)
+}
