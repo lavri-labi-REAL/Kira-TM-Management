@@ -1,9 +1,10 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useState } from 'react'
-import { ArrowLeft, Edit2, Calendar, Globe, Tag, User, FileText, Plus, Trash2, Clock } from 'lucide-react'
+import { ArrowLeft, Edit2, Calendar, Globe, Tag, User, FileText, Plus, Trash2, Clock, AlertTriangle } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useTrademark, useUpdateTrademark } from '../../hooks/useTrademarks'
 import { useTrademarkDocuments, useTimeline, useAddTimelineEvent, useAddDocument, useDeleteDocument } from '../../hooks/useDocuments'
+import { useDeadlines } from '../../hooks/useDeadlines'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -60,6 +61,7 @@ export default function TrademarkDetail() {
   const { data: trademark, isLoading } = useTrademark(id)
   const { data: documents = [] } = useTrademarkDocuments(id)
   const { data: timeline = [] } = useTimeline(id)
+  const { data: allDeadlines = [] } = useDeadlines()
   const updateMutation = useUpdateTrademark()
   const addDocMutation = useAddDocument()
   const deleteDocMutation = useDeleteDocument()
@@ -111,6 +113,13 @@ export default function TrademarkDetail() {
 
   const renewalDays = daysUntil(trademark.renewalDate)
   const renewalUrgency = urgencyBadge(renewalDays)
+
+  const tmDeadlines = allDeadlines
+    .filter(d => d.trademarkId === id)
+    .map(d => ({ ...d, days: daysUntil(d.dueDate) }))
+    .sort((a, b) => (a.days ?? 9999) - (b.days ?? 9999))
+
+  const overdueDeadlines = tmDeadlines.filter(d => d.days !== null && d.days < 0)
 
   return (
     <div className="max-w-5xl">
@@ -239,22 +248,67 @@ export default function TrademarkDetail() {
         <div className="space-y-5">
           {/* Upcoming Deadlines */}
           <Card>
-            <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><Clock size={16} className="text-[#ffa600]" /> Upcoming Deadlines</h2>
+            <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <Clock size={16} className="text-[#ffa600]" /> Deadlines
+              {overdueDeadlines.length > 0 && (
+                <span className="ml-auto text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <AlertTriangle size={11} /> {overdueDeadlines.length} overdue
+                </span>
+              )}
+            </h2>
+
             <div className="space-y-2">
-              {trademark.renewalDate && (
-                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
-                  <p className="text-xs font-medium text-gray-700">Renewal</p>
-                  <p className="text-sm font-semibold text-gray-900">{formatDate(trademark.renewalDate)}</p>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${renewalUrgency.cls}`}>{renewalUrgency.text}</span>
+              {/* Overdue alert banner */}
+              {overdueDeadlines.length > 0 && (
+                <div className="p-3 rounded-lg bg-red-50 border border-red-200">
+                  <p className="text-xs font-semibold text-red-700 flex items-center gap-1 mb-1">
+                    <AlertTriangle size={12} /> Action Required
+                  </p>
+                  {overdueDeadlines.map(d => (
+                    <div key={d.id} className="flex items-center justify-between mt-1">
+                      <span className="text-xs text-red-800 font-medium">{d.deadlineType}</span>
+                      <span className="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                        {Math.abs(d.days)}d overdue
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
+
+              {/* All deadlines from store */}
+              {tmDeadlines.filter(d => d.days !== null && d.days >= 0).map(d => {
+                const urg = urgencyBadge(d.days)
+                return (
+                  <div key={d.id} className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-gray-700">{d.deadlineType}</p>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${urg.cls}`}>{urg.text}</span>
+                    </div>
+                    <p className="text-sm font-semibold text-gray-900 mt-0.5">{formatDate(d.dueDate)}</p>
+                    {d.notes && <p className="text-xs text-gray-400 mt-0.5">{d.notes}</p>}
+                  </div>
+                )
+              })}
+
+              {/* Fallback: renewal from trademark record if not in deadlines store */}
+              {tmDeadlines.length === 0 && trademark.renewalDate && (
+                <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-gray-700">Renewal</p>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${renewalUrgency.cls}`}>{renewalUrgency.text}</span>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-900 mt-0.5">{formatDate(trademark.renewalDate)}</p>
+                </div>
+              )}
+
               {!trademark.registrationDate && trademark.publicationDate && (
                 <div className="p-3 rounded-lg bg-sky-50 border border-sky-100">
                   <p className="text-xs font-medium text-sky-700">Opposition Window</p>
                   <p className="text-sm font-semibold text-gray-900">~3 months from publication</p>
                 </div>
               )}
-              {!trademark.renewalDate && (
+
+              {tmDeadlines.length === 0 && !trademark.renewalDate && (
                 <p className="text-xs text-gray-400 text-center py-2">No deadlines configured.</p>
               )}
             </div>

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Plus, Bell, BellOff, Trash2, AlertCircle, Calendar, Clock } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useDeadlines, useAddDeadline, useUpdateDeadline, useDeleteDeadline } from '../../hooks/useDeadlines'
@@ -50,6 +51,7 @@ function AddDeadlineForm({ trademarks, onSubmit, onCancel, isLoading }) {
 }
 
 export default function DeadlineDashboard() {
+  const navigate = useNavigate()
   const { data: deadlines = [], isLoading } = useDeadlines()
   const { data: trademarks = [] } = useTrademarks()
   const addMutation = useAddDeadline()
@@ -166,7 +168,14 @@ export default function DeadlineDashboard() {
                 const urg = urgencyBadge(dl.days)
                 return (
                   <tr key={dl.id} className={`border-b border-gray-100 last:border-0 transition-colors ${urgencyClass(dl.days) || 'hover:bg-gray-50'}`}>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-900">{dl.markName}</td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => navigate(`/trademarks/${dl.trademarkId}`)}
+                        className="text-sm font-semibold text-gray-900 hover:text-[#ffa600] transition-colors"
+                      >
+                        {dl.markName}
+                      </button>
+                    </td>
                     <td className="px-4 py-3">
                       <span className="text-xs bg-[#ffa600]/10 text-[#C2410C] font-medium px-2 py-0.5 rounded-full">{dl.deadlineType}</span>
                     </td>
