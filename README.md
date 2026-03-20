@@ -135,13 +135,13 @@ React Query is used with mock fetcher functions that simulate a short network de
 
 ## Deployment
 
-### Netlify (recommended)
+### Vercel (recommended)
 
-The repo includes a `netlify.toml` and `public/_redirects` for React Router SPA support.
+The repo includes a `vercel.json` for React Router SPA support and an `.npmrc` to resolve the `react-simple-maps` peer dependency conflict automatically.
 
-**Drag & drop:** run `npm run build`, then drop the `dist/` folder at [app.netlify.com](https://app.netlify.com).
+**Git integration:** import your GitHub repo at [vercel.com/new](https://vercel.com/new) — Vercel auto-detects Vite and deploys on every push to `main`. No extra configuration needed.
 
-**Git integration:** connect your GitHub repo in Netlify — it auto-reads `netlify.toml` and deploys on every push to `main`.
+**CLI:** `npx vercel --prod`
 
 ### GitHub Pages
 
