@@ -15,6 +15,7 @@ import { TrademarkForm } from './TrademarkForm'
 import { formatDate, daysUntil, urgencyBadge } from '../../utils/deadlineUtils'
 import { TIMELINE_TYPE_COLORS, STATUS_BADGE } from '../../utils/statusColors'
 import { NICE_CLASSES } from '../../data/mockTrademarks'
+import { CertificatePreview } from '../../components/common/CertificatePreview'
 import { DOC_TYPES } from '../../data/mockDocuments'
 import { useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'
@@ -380,13 +381,17 @@ export default function TrademarkDetail() {
       />
 
       {/* Document Preview */}
-      <Modal isOpen={!!previewDoc} onClose={() => setPreviewDoc(null)} title={previewDoc?.fileName} size="lg">
+      <Modal isOpen={!!previewDoc} onClose={() => setPreviewDoc(null)} title={previewDoc?.fileName} size="xl">
         {previewDoc && (
           <div>
-            <div className="flex items-center gap-2 mb-3 text-xs text-gray-500">
-              <span>{previewDoc.fileType}</span>·<span>{previewDoc.size}</span>·<span>{formatDate(previewDoc.uploadedDate)}</span>
+            <div className="flex items-center gap-2 mb-4 text-xs text-gray-500">
+              <span className="font-medium text-gray-700">{previewDoc.fileType}</span>
+              <span>·</span><span>{previewDoc.size}</span>
+              <span>·</span><span>{formatDate(previewDoc.uploadedDate)}</span>
             </div>
-            {previewDoc.extractedText ? (
+            {previewDoc.fileType === 'Certificate' ? (
+              <CertificatePreview doc={previewDoc} trademark={trademark} />
+            ) : previewDoc.extractedText ? (
               <div>
                 <p className="text-xs font-medium text-gray-500 mb-2">Extracted Text (OCR)</p>
                 <textarea

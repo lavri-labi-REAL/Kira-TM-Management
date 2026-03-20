@@ -52,6 +52,7 @@ export const JURISDICTIONS = [
   'South Korea', 'Switzerland', 'Netherlands', 'Spain', 'Italy', 'Sweden',
   'Norway', 'Denmark', 'Singapore', 'South Africa', 'UAE', 'Russia',
   'Argentina', 'Chile', 'Colombia', 'Turkey', 'Poland', 'Czech Republic',
+  'Kenya', 'Nigeria', 'Egypt', 'Morocco',
 ]
 
 export const MARK_TYPES = ['Word', 'Figurative', 'Combined', 'Sound', '3D']
@@ -358,6 +359,21 @@ const defaultTrademarks = [
     owner: 'Kirkira Europe SARL',
     notes: 'Successfully registered in Italy without opposition.',
     applicationNumber: 'IT-2022-0214-TMP',
+  },
+  {
+    id: 'tm-021',
+    markName: 'Kirkira',
+    markType: 'Word',
+    niceClasses: [35, 42, 45],
+    jurisdiction: 'Kenya',
+    filingDate: '2021-05-10',
+    publicationDate: '2021-10-20',
+    registrationDate: '2022-04-15',
+    renewalDate: '2032-04-15',
+    status: 'Registered',
+    owner: 'Kirkira Holdings Ltd.',
+    notes: 'Core brand registered in Kenya via KIPI.',
+    applicationNumber: 'KE-2021-0510-KIR',
   },
   {
     id: 'tm-020',

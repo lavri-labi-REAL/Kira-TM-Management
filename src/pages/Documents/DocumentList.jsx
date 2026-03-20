@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { useDropzone } from 'react-dropzone'
 import { useDocuments, useAddDocument, useDeleteDocument } from '../../hooks/useDocuments'
 import { useTrademarks } from '../../hooks/useTrademarks'
+import { CertificatePreview } from '../../components/common/CertificatePreview'
 import { Button } from '../../components/ui/Button'
 import { Modal } from '../../components/ui/Modal'
 import { ConfirmationModal } from '../../components/common/ConfirmationModal'
@@ -209,10 +210,13 @@ export default function DocumentList() {
                 return (
                   <tr key={doc.id} className="hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0">
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <FileText size={16} className="text-gray-400 flex-shrink-0" />
-                        <span className="text-sm font-medium text-gray-800">{doc.fileName}</span>
-                      </div>
+                      <button
+                        onClick={() => setPreviewItem(doc)}
+                        className="flex items-center gap-2 hover:text-[#ffa600] transition-colors group"
+                      >
+                        <FileText size={16} className="text-gray-400 group-hover:text-[#ffa600] flex-shrink-0 transition-colors" />
+                        <span className="text-sm font-medium text-gray-800 group-hover:text-[#ffa600] transition-colors">{doc.fileName}</span>
+                      </button>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
                       {tm ? `${tm.markName} — ${tm.jurisdiction}` : '—'}
@@ -261,31 +265,38 @@ export default function DocumentList() {
       />
 
       {/* Preview Modal */}
-      <Modal isOpen={!!previewItem} onClose={() => setPreviewItem(null)} title={previewItem?.fileName} size="lg">
-        {previewItem && (
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <TagBadge color={TYPE_COLORS[previewItem.fileType] || 'gray'}>{previewItem.fileType}</TagBadge>
-              <span className="text-xs text-gray-500">{previewItem.size}</span>
-              <span className="text-xs text-gray-500">{formatDate(previewItem.uploadedDate)}</span>
+      <Modal isOpen={!!previewItem} onClose={() => setPreviewItem(null)} title={previewItem?.fileName} size="xl">
+        {previewItem && (() => {
+          const tm = tmMap[previewItem.trademarkId]
+          const isCertificate = previewItem.fileType === 'Certificate'
+          return (
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <TagBadge color={TYPE_COLORS[previewItem.fileType] || 'gray'}>{previewItem.fileType}</TagBadge>
+                <span className="text-xs text-gray-500">{previewItem.size}</span>
+                <span className="text-xs text-gray-500">{formatDate(previewItem.uploadedDate)}</span>
+                {tm && <span className="text-xs text-gray-500 ml-auto">{tm.markName} — {tm.jurisdiction}</span>}
+              </div>
+              {isCertificate && tm ? (
+                <CertificatePreview doc={previewItem} trademark={tm} />
+              ) : previewItem.extractedText ? (
+                <div>
+                  <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1"><Tag size={12} /> Extracted Text (OCR)</p>
+                  <textarea
+                    readOnly
+                    value={previewItem.extractedText}
+                    rows={14}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 bg-gray-50 resize-none font-mono"
+                  />
+                </div>
+              ) : (
+                <div className="h-48 bg-gray-50 rounded-xl flex items-center justify-center">
+                  <p className="text-sm text-gray-400">Preview not available</p>
+                </div>
+              )}
             </div>
-            {previewItem.extractedText ? (
-              <div>
-                <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1"><Tag size={12} /> Extracted Text (OCR)</p>
-                <textarea
-                  readOnly
-                  value={previewItem.extractedText}
-                  rows={14}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 bg-gray-50 resize-none font-mono"
-                />
-              </div>
-            ) : (
-              <div className="h-48 bg-gray-50 rounded-xl flex items-center justify-center">
-                <p className="text-sm text-gray-400">Preview not available</p>
-              </div>
-            )}
-          </div>
-        )}
+          )
+        })()}
       </Modal>
     </div>
   )

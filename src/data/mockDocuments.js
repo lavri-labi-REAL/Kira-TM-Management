@@ -108,6 +108,16 @@ const defaultDocuments = [
     extractedText: 'RENEWAL REMINDER\nIPI Switzerland\nMark: AuditTrail\nRenewal Due: March 20, 2024\nPlease note this mark will expire if renewal fee is not paid.',
   },
   {
+    id: 'doc-011',
+    trademarkId: 'tm-021',
+    fileName: 'KIPI_Kenya_Kirkira_Certificate.pdf',
+    fileType: 'Certificate',
+    uploadedDate: '2022-04-20',
+    size: '310 KB',
+    url: null,
+    extractedText: '',
+  },
+  {
     id: 'doc-010',
     trademarkId: 'tm-017',
     fileName: 'Singapore_RiskRadar_Certificate.pdf',
