@@ -130,21 +130,55 @@ export default function DeadlineDashboard() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex flex-wrap gap-3 items-center">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search deadlines..." className="w-64" />
+      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex flex-col sm:flex-row flex-wrap gap-3">
+        <SearchInput value={search} onChange={setSearch} placeholder="Search deadlines..." className="w-full sm:w-64" />
         <select
           value={typeFilter}
           onChange={e => setTypeFilter(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600]"
+          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600] w-full sm:w-auto"
         >
           <option value="All">All Types</option>
           {DEADLINE_TYPES.map(t => <option key={t}>{t}</option>)}
         </select>
-        <span className="text-xs text-gray-500 ml-auto">{filtered.length} deadlines</span>
+        <span className="text-xs text-gray-500 sm:ml-auto self-center">{filtered.length} deadlines</span>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {filtered.length === 0 ? (
+          <div className="py-12 text-center bg-white rounded-xl border border-gray-200">
+            <div className="text-4xl mb-2">✅</div>
+            <p className="text-gray-500 font-medium">No deadlines found</p>
+          </div>
+        ) : filtered.map(dl => {
+          const urg = urgencyBadge(dl.days)
+          return (
+            <div key={dl.id} className={`bg-white rounded-xl border border-gray-200 p-4 ${urgencyClass(dl.days)}`}>
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <button onClick={() => navigate(`/trademarks/${dl.trademarkId}`)} className="text-sm font-semibold text-gray-900 hover:text-[#ffa600] transition-colors text-left">
+                  {dl.markName}
+                </button>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${urg.cls}`}>{urg.text}</span>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <span className="text-xs bg-[#ffa600]/10 text-[#C2410C] font-medium px-2 py-0.5 rounded-full">{dl.deadlineType}</span>
+                <span className="text-xs text-gray-500">{dl.jurisdiction}</span>
+              </div>
+              <p className="text-xs text-gray-600 mb-3">Due: {formatDate(dl.dueDate)}</p>
+              {dl.notes && <p className="text-xs text-gray-400 mb-3 italic">{dl.notes}</p>}
+              <div className="flex gap-2 pt-2 border-t border-gray-100">
+                <button onClick={() => toggleNotification(dl)} className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-1 ${dl.emailNotification ? 'bg-orange-50 text-[#ffa600]' : 'bg-gray-50 text-gray-500'}`}>
+                  {dl.emailNotification ? <><Bell size={12} /> Notif On</> : <><BellOff size={12} /> Notif Off</>}
+                </button>
+                <button onClick={() => setDeleteItem(dl)} className="flex-1 py-1.5 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">Remove</button>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
         {filtered.length === 0 ? (
           <div className="py-16 text-center">
             <div className="text-5xl mb-3">✅</div>
@@ -169,34 +203,21 @@ export default function DeadlineDashboard() {
                 return (
                   <tr key={dl.id} className={`border-b border-gray-100 last:border-0 transition-colors ${urgencyClass(dl.days) || 'hover:bg-gray-50'}`}>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() => navigate(`/trademarks/${dl.trademarkId}`)}
-                        className="text-sm font-semibold text-gray-900 hover:text-[#ffa600] transition-colors"
-                      >
+                      <button onClick={() => navigate(`/trademarks/${dl.trademarkId}`)} className="text-sm font-semibold text-gray-900 hover:text-[#ffa600] transition-colors">
                         {dl.markName}
                       </button>
                     </td>
-                    <td className="px-4 py-3">
-                      <span className="text-xs bg-[#ffa600]/10 text-[#C2410C] font-medium px-2 py-0.5 rounded-full">{dl.deadlineType}</span>
-                    </td>
+                    <td className="px-4 py-3"><span className="text-xs bg-[#ffa600]/10 text-[#C2410C] font-medium px-2 py-0.5 rounded-full">{dl.deadlineType}</span></td>
                     <td className="px-4 py-3 text-sm text-gray-600">{dl.jurisdiction}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">{formatDate(dl.dueDate)}</td>
-                    <td className="px-4 py-3">
-                      <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${urg.cls}`}>{urg.text}</span>
-                    </td>
+                    <td className="px-4 py-3"><span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${urg.cls}`}>{urg.text}</span></td>
                     <td className="px-4 py-3 text-xs text-gray-500 max-w-xs truncate">{dl.notes || '—'}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <button
-                          onClick={() => toggleNotification(dl)}
-                          className={`p-1.5 rounded-lg transition-colors ${dl.emailNotification ? 'text-[#ffa600] bg-orange-50' : 'text-gray-400 hover:bg-gray-100'}`}
-                          title={dl.emailNotification ? 'Disable notification' : 'Enable notification'}
-                        >
+                        <button onClick={() => toggleNotification(dl)} className={`p-1.5 rounded-lg transition-colors ${dl.emailNotification ? 'text-[#ffa600] bg-orange-50' : 'text-gray-400 hover:bg-gray-100'}`}>
                           {dl.emailNotification ? <Bell size={14} /> : <BellOff size={14} />}
                         </button>
-                        <button onClick={() => setDeleteItem(dl)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                          <Trash2 size={14} />
-                        </button>
+                        <button onClick={() => setDeleteItem(dl)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 size={14} /></button>
                       </div>
                     </td>
                   </tr>

@@ -129,22 +129,22 @@ export default function WorldMapDashboard() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex flex-wrap gap-3 items-center">
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600]">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex flex-col sm:flex-row flex-wrap gap-3">
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600] w-full sm:w-auto">
           <option value="All">All Statuses</option>
           {STATUSES.map(s => <option key={s}>{s}</option>)}
         </select>
-        <select value={classFilter} onChange={e => setClassFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600]">
+        <select value={classFilter} onChange={e => setClassFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600] w-full sm:w-auto">
           <option value="All">All Classes</option>
           {NICE_CLASSES.map(nc => <option key={nc.value} value={nc.value}>Class {nc.value}</option>)}
         </select>
-        <select value={ownerFilter} onChange={e => setOwnerFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600]">
+        <select value={ownerFilter} onChange={e => setOwnerFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600] w-full sm:w-auto">
           <option value="All">All Owners</option>
           {owners.map(o => <option key={o}>{o}</option>)}
         </select>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-4">
         {/* Map */}
         <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden relative">
           <ComposableMap
@@ -213,7 +213,7 @@ export default function WorldMapDashboard() {
 
         {/* Side panel */}
         {selectedCountry && (
-          <div className="w-72 bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden">
+          <div className="w-full lg:w-72 bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden max-h-96 lg:max-h-none">
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-[#ffa600]/5">
               <div>
                 <h3 className="text-sm font-bold text-gray-900">{selectedCountry}</h3>
@@ -245,7 +245,7 @@ export default function WorldMapDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
         <StatCard label="Jurisdictions Active" value={activeJurisdictions} icon={<Globe size={20} />} color="orange" />
         <StatCard label="Total Trademarks" value={totalMarksOnMap} icon={<TrendingUp size={20} />} color="blue" />
         <StatCard label="Most Active Jurisdiction" value={mostActive} icon={<Globe size={20} />} color="green" />

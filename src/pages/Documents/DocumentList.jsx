@@ -163,29 +163,50 @@ export default function DocumentList() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex flex-wrap gap-3 items-center">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search documents..." className="w-64" />
-        <select
-          value={typeFilter}
-          onChange={e => setTypeFilter(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600]"
-        >
+      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex flex-col sm:flex-row flex-wrap gap-3">
+        <SearchInput value={search} onChange={setSearch} placeholder="Search documents..." className="w-full sm:w-64" />
+        <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600] w-full sm:w-auto">
           <option value="All">All Types</option>
           {DOC_TYPES.map(t => <option key={t}>{t}</option>)}
         </select>
-        <select
-          value={tmFilter}
-          onChange={e => setTmFilter(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600]"
-        >
+        <select value={tmFilter} onChange={e => setTmFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ffa600] w-full sm:w-auto">
           <option value="All">All Trademarks</option>
           {trademarks.map(t => <option key={t.id} value={t.id}>{t.markName} — {t.jurisdiction}</option>)}
         </select>
-        <span className="text-xs text-gray-500 ml-auto">{filtered.length} documents</span>
+        <span className="text-xs text-gray-500 sm:ml-auto self-center">{filtered.length} documents</span>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {filtered.length === 0 ? (
+          <div className="py-12 text-center bg-white rounded-xl border border-gray-200">
+            <div className="text-4xl mb-2">📂</div>
+            <p className="text-gray-500 font-medium">No documents found</p>
+          </div>
+        ) : filtered.map(doc => {
+          const tm = tmMap[doc.trademarkId]
+          return (
+            <div key={doc.id} className="bg-white rounded-xl border border-gray-200 p-4">
+              <button onClick={() => setPreviewItem(doc)} className="flex items-center gap-2 w-full text-left mb-2 group">
+                <FileText size={16} className="text-gray-400 group-hover:text-[#ffa600] flex-shrink-0 transition-colors" />
+                <span className="text-sm font-semibold text-gray-800 group-hover:text-[#ffa600] transition-colors truncate">{doc.fileName}</span>
+              </button>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <TagBadge color={TYPE_COLORS[doc.fileType] || 'gray'}>{doc.fileType}</TagBadge>
+                <span className="text-xs text-gray-400">{doc.size} · {formatDate(doc.uploadedDate)}</span>
+              </div>
+              {tm && <p className="text-xs text-gray-500 mb-3">{tm.markName} — {tm.jurisdiction}</p>}
+              <div className="flex gap-2 pt-2 border-t border-gray-100">
+                <button onClick={() => setPreviewItem(doc)} className="flex-1 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">Preview</button>
+                <button onClick={() => setDeleteItem(doc)} className="flex-1 py-1.5 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">Delete</button>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
         {filtered.length === 0 ? (
           <div className="py-16 text-center">
             <div className="text-5xl mb-3">📂</div>
@@ -210,30 +231,19 @@ export default function DocumentList() {
                 return (
                   <tr key={doc.id} className="hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0">
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() => setPreviewItem(doc)}
-                        className="flex items-center gap-2 hover:text-[#ffa600] transition-colors group"
-                      >
+                      <button onClick={() => setPreviewItem(doc)} className="flex items-center gap-2 hover:text-[#ffa600] transition-colors group">
                         <FileText size={16} className="text-gray-400 group-hover:text-[#ffa600] flex-shrink-0 transition-colors" />
                         <span className="text-sm font-medium text-gray-800 group-hover:text-[#ffa600] transition-colors">{doc.fileName}</span>
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {tm ? `${tm.markName} — ${tm.jurisdiction}` : '—'}
-                    </td>
-                    <td className="px-4 py-3">
-                      <TagBadge color={TYPE_COLORS[doc.fileType] || 'gray'}>{doc.fileType}</TagBadge>
-                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{tm ? `${tm.markName} — ${tm.jurisdiction}` : '—'}</td>
+                    <td className="px-4 py-3"><TagBadge color={TYPE_COLORS[doc.fileType] || 'gray'}>{doc.fileType}</TagBadge></td>
                     <td className="px-4 py-3 text-sm text-gray-500">{formatDate(doc.uploadedDate)}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{doc.size}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => setPreviewItem(doc)} className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-colors" title="Preview">
-                          <Eye size={15} />
-                        </button>
-                        <button onClick={() => setDeleteItem(doc)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Delete">
-                          <Trash2 size={15} />
-                        </button>
+                        <button onClick={() => setPreviewItem(doc)} className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"><Eye size={15} /></button>
+                        <button onClick={() => setDeleteItem(doc)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 size={15} /></button>
                       </div>
                     </td>
                   </tr>

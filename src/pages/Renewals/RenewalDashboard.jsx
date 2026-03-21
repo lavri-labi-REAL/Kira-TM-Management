@@ -69,18 +69,18 @@ export default function RenewalDashboard() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Renewal Management</h1>
           <p className="text-sm text-gray-500 mt-0.5">Manage upcoming trademark renewals and fees</p>
         </div>
         {/* Horizon tabs */}
-        <div className="flex bg-gray-100 rounded-xl p-1 gap-1">
+        <div className="flex bg-gray-100 rounded-xl p-1 gap-1 self-start sm:self-auto">
           {HORIZON_OPTIONS.map(opt => (
             <button
               key={opt.months}
               onClick={() => setHorizon(opt.months)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 md:px-4 py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all ${
                 horizon === opt.months
                   ? 'bg-[#ffa600] text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-800'
@@ -114,7 +114,8 @@ export default function RenewalDashboard() {
             <div className="px-5 py-4 border-b border-gray-100">
               <h2 className="text-sm font-semibold text-gray-900">Renewal Overview</h2>
             </div>
-            <table className="w-full">
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
                   <th className="px-4 py-3 text-left">Mark</th>
@@ -187,6 +188,7 @@ export default function RenewalDashboard() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Renewal cards */}
