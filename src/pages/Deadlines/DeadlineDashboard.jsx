@@ -155,7 +155,7 @@ export default function DeadlineDashboard() {
           return (
             <div key={dl.id} className={`bg-white rounded-xl border border-gray-200 p-4 ${urgencyClass(dl.days)}`}>
               <div className="flex items-start justify-between gap-2 mb-2">
-                <button onClick={() => navigate(`/trademarks/${dl.trademarkId}`)} className="text-sm font-semibold text-gray-900 hover:text-[#ffa600] transition-colors text-left">
+                <button onClick={() => navigate(`/trademarks/${dl.trademarkId}`)} className="text-sm font-semibold text-gray-900 hover:text-[#ffa600] transition-colors text-left min-w-0 break-words">
                   {dl.markName}
                 </button>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${urg.cls}`}>{urg.text}</span>
